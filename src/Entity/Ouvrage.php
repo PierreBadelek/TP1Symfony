@@ -22,7 +22,7 @@ class Ouvrage
     private ?string $editeur = null;
 
     #[ORM\Column(length: 125)]
-    private ?string $ISBN = null;
+    private ?int $ISBN = null;
 
     #[ORM\Column]
     private ?int $annee = null;
@@ -77,12 +77,12 @@ class Ouvrage
         return $this;
     }
 
-    public function getISBN(): ?string
+    public function getISBN(): ?int
     {
         return $this->ISBN;
     }
 
-    public function setISBN(string $ISBN): static
+    public function setISBN(int $ISBN): static
     {
         $this->ISBN = $ISBN;
 
