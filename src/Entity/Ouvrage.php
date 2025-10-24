@@ -25,7 +25,7 @@ class Ouvrage
     private ?string $ISBN = null;
 
     #[ORM\Column]
-    private ?int $annÃee = null;
+    private ?int $annee = null;
 
     #[ORM\Column(length: 512)]
     private ?string $resume = null;
@@ -89,14 +89,14 @@ class Ouvrage
         return $this;
     }
 
-    public function getAnnÃee(): ?int
+    public function getAnnee(): ?int
     {
-        return $this->annÃee;
+        return $this->annee;
     }
 
-    public function setAnnÃee(int $annÃee): static
+    public function setAnnee(int $annee): static
     {
-        $this->annÃee = $annÃee;
+        $this->annee = $annee;
 
         return $this;
     }
