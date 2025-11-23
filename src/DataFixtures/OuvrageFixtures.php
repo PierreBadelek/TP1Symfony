@@ -4,9 +4,9 @@ namespace App\DataFixtures;
 
 use App\Entity\Auteur;
 use App\Entity\Categorie;
+use App\Entity\Exemplaire;
 use App\Entity\Ouvrage;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\DBAL\Types\DateImmutableType;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 
@@ -38,13 +38,14 @@ class OuvrageFixtures extends Fixture
         }
         $manager->flush();
 
-
+        //Ajout des ouvrages dans la BDD
+        $lesOuvrages = [];
         for ($i = 0; $i < 500; $i++) {
             $ouvrage = new Ouvrage();
             $ouvrage->setTitre($faker->realText(25));
             $ouvrage->setResume($faker->paragraphs(3, true));
             $ouvrage->setAnnee($faker->numberBetween(1900, 2025));
-            $ouvrage->setISBN($faker->isbn13());
+            $ouvrage->setIsbn($faker->isbn13());
             $ouvrage->setEditeur($faker->company());
             for ($j = 0; $j < $faker->numberBetween(0,3); $j++) {
                 $ouvrage->addCategory($faker->randomElement($cat));
@@ -53,12 +54,23 @@ class OuvrageFixtures extends Fixture
             for ($j = 0; $j < $faker->numberBetween(1,3); $j++) {
                 $ouvrage->addAuteur($faker->randomElement($auteurs));
             }
-
-
-
+            $lesOuvrages[] = $ouvrage;
             $manager->persist($ouvrage);
         }
 
         $manager->flush();
+
+        //Ajout des exemplaires dans la BDD
+        $etatOuvrage = ["DAMAGED","CORRECT","NEW"];
+        for ($j = 0; $j < 1000; $j++) {
+            $exemplaire = new Exemplaire();
+            $exemplaire->setOuvrage($faker->randomElement($lesOuvrages));
+            $exemplaire->setCote($faker->numberBetween(1000,9999));
+            $exemplaire->setEtat($faker->randomElement($etatOuvrage));
+            $exemplaire->setDisponible($faker->boolean(0.6));
+            $manager->persist($exemplaire);
+        }
+        $manager->flush();
+
     }
 }

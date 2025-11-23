@@ -16,20 +16,39 @@ class OuvrageRepository extends ServiceEntityRepository
         parent::__construct($registry, Ouvrage::class);
     }
 
-    //    /**
-    //     * @return Ouvrage[] Returns an array of Ouvrage objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('o')
-    //            ->andWhere('o.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('o.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return Ouvrage[] Returns an array of Ouvrage objects
+     */
+    public function findAllSearch(Ouvrage $search): array
+    {
+        $query = $this->createQueryBuilder('ouvrageSearch');
+
+        if ($search->getTitre()) {
+            $query->andWhere('ouvrageSearch.titre LIKE :titre')
+                ->setParameter('titre', '%'.$search->getTitre().'%');
+        }
+        if ($search->getIsbn()){
+            $query->andWhere('ouvrageSearch.isbn = :isbn')
+                ->setParameter('isbn', $search->getIsbn());
+        }
+        if ($search->getAnnee()){
+            $query->andWhere('ouvrageSearch.annee = :annee')
+                ->setParameter('annee', $search->getAnnee());
+        }
+        if ($search->getCategories() && count($search->getCategories()) > 0) {
+            $query
+                ->leftJoin('ouvrageSearch.categories', 'c')
+                ->andWhere('c IN (:categories)')
+                ->setParameter('categories', $search->getCategories());
+        }
+
+
+
+
+        return $query
+            ->getQuery()
+            ->getResult();
+    }
 
     //    public function findOneBySomeField($value): ?Ouvrage
     //    {

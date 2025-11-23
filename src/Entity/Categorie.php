@@ -22,11 +22,11 @@ class Categorie
      * @var Collection<int, Ouvrage>
      */
     #[ORM\ManyToMany(targetEntity: Ouvrage::class, mappedBy: 'categories')]
-    private Collection $categories;
+    private Collection $ouvrages;
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
+        $this->ouvrages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -49,25 +49,25 @@ class Categorie
     /**
      * @return Collection<int, Ouvrage>
      */
-    public function getCategories(): Collection
+    public function getOuvrages(): Collection
     {
-        return $this->categories;
+        return $this->ouvrages;
     }
 
-    public function addCategory(Ouvrage $category): static
+    public function addOuvrage(Ouvrage $ouvrage): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addCategory($this);
+        if (!$this->ouvrages->contains($ouvrage)) {
+            $this->ouvrages->add($ouvrage);
+            $ouvrage->addCategory($this);
         }
 
         return $this;
     }
 
-    public function removeCategory(Ouvrage $category): static
+    public function removeOuvrage(Ouvrage $ouvrage): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeCategory($this);
+        if ($this->ouvrages->removeElement($ouvrage)) {
+            $ouvrage->removeCategory($this);
         }
 
         return $this;

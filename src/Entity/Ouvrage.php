@@ -22,7 +22,7 @@ class Ouvrage
     private ?string $editeur = null;
 
     #[ORM\Column(length: 125)]
-    private ?int $ISBN = null;
+    private ?int $isbn = null;
 
     #[ORM\Column]
     private ?int $annee = null;
@@ -31,21 +31,28 @@ class Ouvrage
     private ?string $resume = null;
 
     /**
-     * @var Collection<int, categorie>
+     * @var Collection<int, Categorie>
      */
-    #[ORM\ManyToMany(targetEntity: categorie::class, inversedBy: 'categories')]
+    #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'ouvrages')]
     private Collection $categories;
 
     /**
-     * @var Collection<int, auteur>
+     * @var Collection<int, Auteur>
      */
-    #[ORM\ManyToMany(targetEntity: auteur::class, inversedBy: 'auteurs')]
+    #[ORM\ManyToMany(targetEntity: Auteur::class, inversedBy: 'auteurs')]
     private Collection $auteurs;
+
+    /**
+     * @var Collection<int, Exemplaire>
+     */
+    #[ORM\OneToMany(targetEntity: Exemplaire::class, mappedBy: 'Ouvrage')]
+    private Collection $exemplaires;
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->auteurs = new ArrayCollection();
+        $this->exemplaires = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,14 +84,14 @@ class Ouvrage
         return $this;
     }
 
-    public function getISBN(): ?int
+    public function getIsbn(): ?int
     {
-        return $this->ISBN;
+        return $this->isbn;
     }
 
-    public function setISBN(int $ISBN): static
+    public function setIsbn(int $isbn): static
     {
-        $this->ISBN = $ISBN;
+        $this->isbn = $isbn;
 
         return $this;
     }
@@ -157,6 +164,36 @@ class Ouvrage
     public function removeAuteur(auteur $auteur): static
     {
         $this->auteurs->removeElement($auteur);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Exemplaire>
+     */
+    public function getExemplaires(): Collection
+    {
+        return $this->exemplaires;
+    }
+
+    public function addExemplaire(Exemplaire $exemplaire): static
+    {
+        if (!$this->exemplaires->contains($exemplaire)) {
+            $this->exemplaires->add($exemplaire);
+            $exemplaire->setOuvrage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExemplaire(Exemplaire $exemplaire): static
+    {
+        if ($this->exemplaires->removeElement($exemplaire)) {
+            // set the owning side to null (unless already changed)
+            if ($exemplaire->getOuvrage() === $this) {
+                $exemplaire->setOuvrage(null);
+            }
+        }
 
         return $this;
     }
