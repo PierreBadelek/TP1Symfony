@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LibraShelf | Catalogue Ouvrage {% endblock %}
+
+
+{% block body %}
+    <div class="container pt-3">
+        <div class="row justify-content-center">
+            <h1> Ouvrages </h1>
+            <!-- Colonne de gauche -->
+            <div class="col-2">
+                <div class="h4 p-3">Filtre</div>
+                {{ form_start(form) }}
+                {{ form_row(form.titre) }}
+                {{ form_row(form.ISBN) }}
+                {{ form_row(form.annee) }}
+                {{ form_row(form.categories) }}
+
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+                {{ form_end(form) }}
+
+
+            </div>
+
+            <!-- Colonne centrale large -->
+            <div class="col-10">
+                <table class="table table-striped ">
+                    <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>ISBN</th>
+                        <th>Editeur</th>
+                        <th>Categorie</th>
+                        <th>Année</th>
+                        <th>Auteurs</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for ouvrage in lesOuvrages %}
+                        <tr class="ligne-table-ouvrage" onclick="window.location.href='{{ path('app_ouvrage_show', {'id': ouvrage.id}) }}';">
+                            <td>{{ ouvrage.titre }}</td>
+                            <td>{{ ouvrage.ISBN }}</td>
+                            <td>{{ ouvrage.editeur }}</td>
+                            <td>
+                                {% for cat in ouvrage.categories %}
+                                    {{ cat.categorienom }} /
+                                {% endfor %}
+                            </td>
+                            <td>{{ ouvrage.annee }}</td>
+                            <td>
+                                {% for aut in ouvrage.auteurs %}
+                                    {{ aut.nom }} /
+                                {% endfor %}
+                            </td>
+
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">no records found</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+{% endblock %}
