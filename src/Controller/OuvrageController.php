@@ -22,9 +22,14 @@ final class OuvrageController extends AbstractController
         $form = $this->createForm(OuvrageSearchType::class, $search);
         $form->handleRequest($request);
 
+        $page = $request->query->getInt('page', 1);
+        $limit = 100;
+
         return $this->render('ouvrage/index.html.twig', [
-            'lesOuvrages' => $ouvrageRepository->findAllSearch($search),
+            'lesOuvrages' => $ouvrageRepository->findAllSearch($search, $page, $limit),
             'form' => $form->createView(),
+            'currentPage' => $page,
+            'totalPages' => $ouvrageRepository->countPages($search, $limit),
         ]);
     }
 

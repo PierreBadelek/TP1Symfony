@@ -1,11 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Ouvrage{% endblock %}
+{% block title %}LibraShelf | Nouvel Ouvrage{% endblock %}
 
 {% block body %}
-    <h1>Create new Ouvrage</h1>
+    <div class="container pt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h1 class="mb-4">Créer un nouvel ouvrage</h1>
 
-    {{ include('ouvrage/_form.html.twig') }}
+                <div class="card">
+                    <div class="card-body">
+                        {{ include('ouvrage/_form.html.twig') }}
+                    </div>
+                </div>
 
-    <a href="{{ path('app_ouvrage_index') }}">back to list</a>
+                <div class="mt-3">
+                    <a class="btn btn-primary" href="{{ path('app_ouvrage_index') }}">Retour à la liste</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

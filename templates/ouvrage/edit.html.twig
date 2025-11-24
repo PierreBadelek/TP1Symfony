@@ -1,13 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Ouvrage{% endblock %}
+{% block title %}LibraShelf | Édition Ouvrage{% endblock %}
 
 {% block body %}
-    <h1>Edit Ouvrage</h1>
+    <div class="container pt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h1 class="mb-4">Modifier un ouvrage</h1>
 
-    {{ include('ouvrage/_form.html.twig', {'button_label': 'Update'}) }}
+                <div class="card">
+                    <div class="card-body">
+                        {{ include('ouvrage/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+                    </div>
+                </div>
 
-    <a href="{{ path('app_ouvrage_index') }}">back to list</a>
-
-    {{ include('ouvrage/_delete_form.html.twig') }}
+                <div class="mt-3">
+                    <a class="btn btn-primary" href="{{ path('app_ouvrage_index') }}">Retour à la liste</a>
+                    {{ include('ouvrage/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

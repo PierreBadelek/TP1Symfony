@@ -1,34 +1,66 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Exemplaire{% endblock %}
+{% block title %}LibraShelf | Exemplaire{% endblock %}
 
 {% block body %}
-    <h1>Exemplaire</h1>
+    <div class="container pt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="mb-4">Détails de l'exemplaire</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ exemplaire.id }}</td>
-            </tr>
-            <tr>
-                <th>Cote</th>
-                <td>{{ exemplaire.cote }}</td>
-            </tr>
-            <tr>
-                <th>Etat</th>
-                <td>{{ exemplaire.etat }}</td>
-            </tr>
-            <tr>
-                <th>Disponible</th>
-                <td>{{ exemplaire.disponible ? 'Yes' : 'No' }}</td>
-            </tr>
-        </tbody>
-    </table>
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 150px;">ID</th>
+                                    <td>{{ exemplaire.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ouvrage</th>
+                                    <td>
+                                        <a href="{{ path('app_ouvrage_show', {'id': exemplaire.ouvrage.id}) }}">
+                                            {{ exemplaire.ouvrage.titre }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Cote</th>
+                                    <td><strong>{{ exemplaire.cote }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>État</th>
+                                    <td>
+                                        {% if exemplaire.etat == 'bon' %}
+                                            <span class="badge bg-success">Bon</span>
+                                        {% elseif exemplaire.etat == 'moyen' %}
+                                            <span class="badge bg-warning">Moyen</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Mauvais</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Disponible</th>
+                                    <td>
+                                        {% if exemplaire.disponible %}
+                                            <span class="badge bg-success">Oui</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Non</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    <a href="{{ path('app_exemplaire_index') }}">back to list</a>
-
-    <a href="{{ path('app_exemplaire_edit', {'id': exemplaire.id}) }}">edit</a>
-
-    {{ include('exemplaire/_delete_form.html.twig') }}
+                <div class="mt-3">
+                    <a class="btn btn-primary" href="{{ path('app_exemplaire_index') }}">Retour à la liste</a>
+                    <a class="btn btn-warning" href="{{ path('app_exemplaire_edit', {'id': exemplaire.id}) }}">Modifier</a>
+                    {{ include('exemplaire/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

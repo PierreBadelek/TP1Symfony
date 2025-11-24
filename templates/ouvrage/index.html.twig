@@ -61,6 +61,50 @@
                     {% endfor %}
                     </tbody>
                 </table>
+
+                {# Pagination #}
+                {% if totalPages > 1 %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {# Bouton Précédent #}
+                            <li class="page-item {% if currentPage == 1 %}disabled{% endif %}">
+                                <a class="page-link" href="{{ path('app_ouvrage_index', {'page': currentPage - 1}) }}">Précédent</a>
+                            </li>
+
+                            {# Première page #}
+                            {% if currentPage > 3 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('app_ouvrage_index', {'page': 1}) }}">1</a>
+                                </li>
+                                {% if currentPage > 4 %}
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                            {% endif %}
+
+                            {# Pages autour de la page courante #}
+                            {% for i in range(max(1, currentPage - 2), min(totalPages, currentPage + 2)) %}
+                                <li class="page-item {% if i == currentPage %}active{% endif %}">
+                                    <a class="page-link" href="{{ path('app_ouvrage_index', {'page': i}) }}">{{ i }}</a>
+                                </li>
+                            {% endfor %}
+
+                            {# Dernière page #}
+                            {% if currentPage < totalPages - 2 %}
+                                {% if currentPage < totalPages - 3 %}
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('app_ouvrage_index', {'page': totalPages}) }}">{{ totalPages }}</a>
+                                </li>
+                            {% endif %}
+
+                            {# Bouton Suivant #}
+                            <li class="page-item {% if currentPage == totalPages %}disabled{% endif %}">
+                                <a class="page-link" href="{{ path('app_ouvrage_index', {'page': currentPage + 1}) }}">Suivant</a>
+                            </li>
+                        </ul>
+                    </nav>
+                {% endif %}
             </div>
         </div>
     </div>

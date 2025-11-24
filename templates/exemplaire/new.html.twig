@@ -1,11 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Exemplaire{% endblock %}
+{% block title %}LibraShelf | Nouvel Exemplaire{% endblock %}
 
 {% block body %}
-    <h1>Create new Exemplaire</h1>
+    <div class="container pt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="mb-4">Créer un nouvel exemplaire</h1>
 
-    {{ include('exemplaire/_form.html.twig') }}
+                <div class="card">
+                    <div class="card-body">
+                        {{ include('exemplaire/_form.html.twig') }}
+                    </div>
+                </div>
 
-    <a href="{{ path('app_exemplaire_index') }}">back to list</a>
+                <div class="mt-3">
+                    <a class="btn btn-primary" href="{{ path('app_exemplaire_index') }}">Retour à la liste</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

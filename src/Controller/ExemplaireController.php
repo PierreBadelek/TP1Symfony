@@ -22,9 +22,14 @@ final class ExemplaireController extends AbstractController
         $form = $this->createForm(ExemplaireSearchType::class, $search);
         $form->handleRequest($request);
 
+        $page = $request->query->getInt('page', 1);
+        $limit = 100;
+
         return $this->render('exemplaire/index.html.twig', [
-            'exemplaires' => $exemplaireRepository->findAllSearch($search),
+            'exemplaires' => $exemplaireRepository->findAllSearch($search, $page, $limit),
             'form' => $form->createView(),
+            'currentPage' => $page,
+            'totalPages' => $exemplaireRepository->countPages($search, $limit),
         ]);
     }
 
