@@ -16,6 +16,33 @@ class ExemplaireRepository extends ServiceEntityRepository
         parent::__construct($registry, Exemplaire::class);
     }
 
+    public function findAllSearch(Exemplaire $search): array
+    {
+        $query = $this->createQueryBuilder('ex');
+
+        if ($search->getCote()) {
+            $query->andWhere('ex.cote = :cote')
+                ->setParameter('cote', $search->getCote());
+        }
+
+        if ($search->isDisponible() != null){
+            $query->andWhere('ex.disponible = :disponible')
+                ->setParameter('disponible', $search->isDisponible());
+        }
+
+
+        if ($search->getEtat()) {
+            $query->andWhere('ex.etat = :etat')
+                ->setParameter('etat', $search->getEtat());
+        }
+
+        if ($search->getOuvrage()) {
+            $query->andWhere('ex.Ouvrage = :ouvrage')
+                ->setParameter('ouvrage', $search->getOuvrage());
+        }
+
+        return $query->getQuery()->getResult();
+    }
     //    /**
     //     * @return Exemplaire[] Returns an array of Exemplaire objects
     //     */

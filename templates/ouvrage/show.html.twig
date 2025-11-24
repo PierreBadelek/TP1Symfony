@@ -51,6 +51,13 @@
 
             </tbody>
         </table>
+        <a href="{{ path('app_exemplaire_index', {
+            Ouvrage: ouvrage.id,
+            disponible: true
+        }) }}" class="btn btn-success">
+            Voir exemplaires disponibles
+        </a>
+        <br>
 
         <a class="btn btn-primary" href="{{ path('app_ouvrage_index') }}">Retour aux ouvrages</a>
         <a class="btn btn-warning" href="{{ path('app_ouvrage_edit', {'id': ouvrage.id}) }}">Modifier</a>
