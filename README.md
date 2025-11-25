@@ -8,7 +8,7 @@ Application web de gestion de bibliothèque développée avec Symfony 7.x permet
 
 1. **Cloner le projet**
 ```bash
-git clone <votre-repo>
+git clone https://github.com/PierreBadelek/TP1Symfony.git
 cd TP1Symfony
 ```
 
