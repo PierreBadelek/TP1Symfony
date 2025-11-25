@@ -36,7 +36,7 @@
                                 <th>Catégories</th>
                                 <td>
                                     {% for cat in ouvrage.categories %}
-                                        <span class="badge bg-info">{{ cat.categorienom }}</span>
+                                        <span class="badge bg-info">{{ cat.categorieNom }}</span>
                                     {% endfor %}
                                 </td>
                             </tr>
@@ -65,8 +65,11 @@
                         Voir exemplaires disponibles
                     </a>
                     <a class="btn btn-primary" href="{{ path('app_ouvrage_index') }}">Retour aux ouvrages</a>
-                    <a class="btn btn-warning" href="{{ path('app_ouvrage_edit', {'id': ouvrage.id}) }}">Modifier</a>
-                    {{ include('ouvrage/_delete_form.html.twig') }}
+
+                    {% if is_granted('ROLE_LIBRARIAN') %}
+                        <a class="btn btn-warning" href="{{ path('app_ouvrage_edit', {'id': ouvrage.id}) }}">Modifier</a>
+                        {{ include('ouvrage/_delete_form.html.twig') }}
+                    {% endif %}
                 </div>
             </div>
         </div>

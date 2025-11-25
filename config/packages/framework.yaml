@@ -5,6 +5,15 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
+    # HTTP security headers
+    http_method_override: false
+
+    # Configure security headers
+    default_locale: fr
+
+    # Additional security headers (configured via services or event listeners)
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
+
     #esi: true
     #fragments: true
 

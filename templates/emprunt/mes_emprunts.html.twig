@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LibraShelf | Mes Emprunts{% endblock %}
+
+{% block body %}
+    <div class="container pt-3">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Mes emprunts en cours</h1>
+
+                {% if totalPenalites > 0 %}
+                    <div class="alert alert-danger">
+                        <strong>⚠️ Attention !</strong> Vous avez {{ totalPenalites }}€ de pénalités impayées.
+                        <a href="#penalites" class="alert-link">Voir les détails</a>
+                    </div>
+                {% endif %}
+
+                {% if empruntsActifs is empty %}
+                    <div class="alert alert-info">
+                        Vous n'avez aucun emprunt en cours.
+                        <a href="{{ path('app_ouvrage_index') }}" class="alert-link">Consulter le catalogue</a>
+                    </div>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ouvrage</th>
+                                    <th>Cote</th>
+                                    <th>Date d'emprunt</th>
+                                    <th>Date de retour prévue</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for emprunt in empruntsActifs %}
+                                <tr class="{% if emprunt.isEnRetard() %}table-danger{% endif %}">
+                                    <td>
+                                        <a href="{{ path('app_ouvrage_show', {'id': emprunt.exemplaire.ouvrage.id}) }}">
+                                            {{ emprunt.exemplaire.ouvrage.titre }}
+                                        </a>
+                                    </td>
+                                    <td>{{ emprunt.exemplaire.cote }}</td>
+                                    <td>{{ emprunt.dateEmprunt|date('d/m/Y') }}</td>
+                                    <td>
+                                        {{ emprunt.dateRetourPrevue|date('d/m/Y') }}
+                                        {% if emprunt.isEnRetard() %}
+                                            <br><span class="badge bg-danger">En retard de {{ emprunt.joursRetard }} jours</span>
+                                        {% else %}
+                                            {% set joursRestants = date(emprunt.dateRetourPrevue).diff(date()).days %}
+                                            {% if joursRestants <= 3 %}
+                                                <br><span class="badge bg-warning">Plus que {{ joursRestants }} jours</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if emprunt.statut == 'en_cours' %}
+                                            <span class="badge bg-primary">En cours</span>
+                                        {% elseif emprunt.statut == 'en_retard' %}
+                                            <span class="badge bg-danger">En retard</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not emprunt.isEnRetard() %}
+                                            <form method="post" action="{{ path('app_emprunt_renouveler', {'id': emprunt.id}) }}" style="display: inline;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('renouveler' ~ emprunt.id) }}">
+                                                <button type="submit" class="btn btn-sm btn-info" onclick="return confirm('Voulez-vous prolonger cet emprunt ?');">
+                                                    Renouveler
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                        <form method="post" action="{{ path('app_emprunt_retour', {'id': emprunt.id}) }}" style="display: inline;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('retour' ~ emprunt.id) }}">
+                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Confirmez-vous le retour de cet ouvrage ?');">
+                                                Retourner
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+                {% if penalites is not empty %}
+                    <h2 class="mt-5 mb-3" id="penalites">Pénalités impayées</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ouvrage</th>
+                                    <th>Jours de retard</th>
+                                    <th>Montant</th>
+                                    <th>Date de création</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for penalite in penalites %}
+                                <tr>
+                                    <td>{{ penalite.emprunt.exemplaire.ouvrage.titre }}</td>
+                                    <td>{{ penalite.joursRetard }}</td>
+                                    <td><strong>{{ penalite.montant }}€</strong></td>
+                                    <td>{{ penalite.dateCreation|date('d/m/Y') }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr class="table-warning">
+                                <td colspan="2"><strong>Total à payer</strong></td>
+                                <td colspan="2"><strong>{{ totalPenalites }}€</strong></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    <a href="{{ path('app_emprunt_historique') }}" class="btn btn-outline-secondary">Voir l'historique</a>
+                    <a href="{{ path('app_ouvrage_index') }}" class="btn btn-primary">Retour au catalogue</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ExemplaireRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ExemplaireRepository::class)]
@@ -25,6 +27,17 @@ class Exemplaire
     #[ORM\ManyToOne(inversedBy: 'exemplaires')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Ouvrage $Ouvrage = null;
+
+    /**
+     * @var Collection<int, Emprunt>
+     */
+    #[ORM\OneToMany(targetEntity: Emprunt::class, mappedBy: 'exemplaire')]
+    private Collection $emprunts;
+
+    public function __construct()
+    {
+        $this->emprunts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +88,35 @@ class Exemplaire
     public function setOuvrage(?Ouvrage $Ouvrage): static
     {
         $this->Ouvrage = $Ouvrage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Emprunt>
+     */
+    public function getEmprunts(): Collection
+    {
+        return $this->emprunts;
+    }
+
+    public function addEmprunt(Emprunt $emprunt): static
+    {
+        if (!$this->emprunts->contains($emprunt)) {
+            $this->emprunts->add($emprunt);
+            $emprunt->setExemplaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmprunt(Emprunt $emprunt): static
+    {
+        if ($this->emprunts->removeElement($emprunt)) {
+            if ($emprunt->getExemplaire() === $this) {
+                $emprunt->setExemplaire(null);
+            }
+        }
 
         return $this;
     }

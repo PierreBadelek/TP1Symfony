@@ -1,0 +1,294 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+<div class="container pt-4">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h1 class="mb-2">Tableau de bord</h1>
+            <p class="text-muted mb-0">Bienvenue, {{ app.user.email }}</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            {% if is_granted('ROLE_ADMIN') %}
+                <span class="badge bg-danger fs-6 px-3 py-2">
+                    <i class="bi bi-shield-fill-check"></i> Administrateur
+                </span>
+            {% endif %}
+            {% if is_granted('ROLE_LIBRARIAN') %}
+                <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+                    <i class="bi bi-person-badge"></i> Bibliothécaire
+                </span>
+            {% endif %}
+            {% if not is_granted('ROLE_LIBRARIAN') and not is_granted('ROLE_ADMIN') %}
+                <span class="badge bg-primary fs-6 px-3 py-2">
+                    <i class="bi bi-person"></i> Membre
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if isAdmin %}
+        {# Dashboard Admin/Librarian #}
+        <div class="row g-4 mb-4">
+            {# KPI 1: Pourcentage d'emprunts #}
+            <div class="col-md-6 col-lg-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted text-uppercase mb-3">Taux d'emprunts</h6>
+                        <div class="position-relative d-inline-block">
+                            <svg width="140" height="140" class="circular-progress">
+                                <circle class="bg-circle" cx="70" cy="70" r="60"></circle>
+                                <circle class="progress-circle" cx="70" cy="70" r="60"
+                                        style="--progress: {{ stats.pourcentageEmprunts }}"></circle>
+                            </svg>
+                            <div class="position-absolute top-50 start-50 translate-middle">
+                                <h2 class="mb-0 fw-bold">{{ stats.pourcentageEmprunts }}%</h2>
+                            </div>
+                        </div>
+                        <p class="text-muted small mt-2 mb-0">
+                            {{ stats.exemplairesEmpruntes }} / {{ stats.totalExemplaires }} exemplaires
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {# KPI 2: Délai moyen d'emprunt #}
+            <div class="col-md-6 col-lg-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted text-uppercase mb-3">Délai moyen</h6>
+                        <div class="my-3">
+                            <h2 class="display-4 fw-bold text-primary mb-0">{{ stats.delaiMoyen }}</h2>
+                            <p class="text-muted mb-0">jours</p>
+                        </div>
+                        <p class="text-muted small mb-0">Durée moyenne d'emprunt</p>
+                    </div>
+                </div>
+            </div>
+
+            {# KPI 3: Emprunts actifs #}
+            <div class="col-md-6 col-lg-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted text-uppercase mb-3">Emprunts actifs</h6>
+                        <div class="my-3">
+                            <h2 class="display-4 fw-bold text-success mb-0">{{ stats.empruntsActifs }}</h2>
+                        </div>
+                        <p class="text-muted small mb-0">En cours actuellement</p>
+                    </div>
+                </div>
+            </div>
+
+            {# KPI 4: Emprunts en retard #}
+            <div class="col-md-6 col-lg-3">
+                <div class="card shadow-sm h-100 {% if stats.empruntsEnRetard > 0 %}border-danger{% endif %}">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted text-uppercase mb-3">En retard</h6>
+                        <div class="my-3">
+                            <h2 class="display-4 fw-bold text-danger mb-0">{{ stats.empruntsEnRetard }}</h2>
+                        </div>
+                        <p class="text-muted small mb-0">Nécessitent attention</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Boutons d'actions rapides #}
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <a href="{{ path('app_exemplaire_index') }}" class="btn btn-outline-primary w-100 py-3">
+                    <i class="bi bi-book"></i> Gérer les exemplaires
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ path('app_ouvrage_index') }}" class="btn btn-outline-primary w-100 py-3">
+                    <i class="bi bi-journal-text"></i> Gérer les ouvrages
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ path('app_user_index') }}" class="btn btn-outline-primary w-100 py-3">
+                    <i class="bi bi-people"></i> Gérer les utilisateurs
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ path('app_emprunt_gestion') }}" class="btn btn-outline-warning w-100 py-3">
+                    <i class="bi bi-clock-history"></i> Gérer les emprunts
+                </a>
+            </div>
+        </div>
+
+        {# Stats supplémentaires #}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Statistiques générales</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="d-flex justify-content-between py-2 border-bottom">
+                                <span>Total exemplaires</span>
+                                <strong>{{ stats.totalExemplaires }}</strong>
+                            </li>
+                            <li class="d-flex justify-content-between py-2 border-bottom">
+                                <span>Exemplaires disponibles</span>
+                                <strong class="text-success">{{ stats.exemplairesDisponibles }}</strong>
+                            </li>
+                            <li class="d-flex justify-content-between py-2 border-bottom">
+                                <span>Exemplaires empruntés</span>
+                                <strong class="text-info">{{ stats.exemplairesEmpruntes }}</strong>
+                            </li>
+                            <li class="d-flex justify-content-between py-2">
+                                <span>Utilisateurs inscrits</span>
+                                <strong>{{ stats.totalUtilisateurs }}</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        {# Dashboard Membre #}
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-muted mb-3">Mes emprunts actifs</h5>
+                        <h2 class="display-3 fw-bold text-primary mb-0">{{ stats.nombreEmpruntsActifs }}</h2>
+                        <p class="text-muted mt-2">livre(s) emprunté(s)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm {% if stats.nombreEmpruntsEnRetard > 0 %}border-danger{% endif %}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-muted mb-3">Emprunts en retard</h5>
+                        <h2 class="display-3 fw-bold text-danger mb-0">{{ stats.nombreEmpruntsEnRetard }}</h2>
+                        <p class="text-muted mt-2">livre(s) à retourner</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Boutons d'actions rapides #}
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <a href="{{ path('app_exemplaire_index') }}" class="btn btn-primary w-100 py-3">
+                    <i class="bi bi-search"></i> Rechercher un livre
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ path('app_ouvrage_index') }}" class="btn btn-outline-primary w-100 py-3">
+                    <i class="bi bi-book"></i> Parcourir le catalogue
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a href="{{ path('app_emprunt_mes_emprunts') }}" class="btn btn-outline-info w-100 py-3">
+                    <i class="bi bi-clock-history"></i> Mes emprunts
+                </a>
+            </div>
+        </div>
+
+        {# Liste des emprunts en retard #}
+        {% if stats.empruntsEnRetard|length > 0 %}
+        <div class="alert alert-danger">
+            <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Attention : Livres en retard</h5>
+            <p class="mb-0">Vous avez {{ stats.nombreEmpruntsEnRetard }} livre(s) en retard. Merci de les retourner au plus vite.</p>
+        </div>
+        {% endif %}
+
+        {# Liste des emprunts actifs #}
+        {% if stats.empruntsActifs|length > 0 %}
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Mes emprunts en cours</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Livre</th>
+                                <th>Date d'emprunt</th>
+                                <th>Date de retour prévue</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emprunt in stats.empruntsActifs %}
+                            <tr class="{% if emprunt.isEnRetard() %}table-danger{% endif %}">
+                                <td class="fw-semibold">
+                                    {{ emprunt.exemplaire.ouvrage.titre }}
+                                </td>
+                                <td>{{ emprunt.dateEmprunt|date('d/m/Y') }}</td>
+                                <td>{{ emprunt.dateRetourPrevue|date('d/m/Y') }}</td>
+                                <td>
+                                    {% if emprunt.isEnRetard() %}
+                                        <span class="badge bg-danger">
+                                            En retard ({{ emprunt.joursRetard }} jour{% if emprunt.joursRetard > 1 %}s{% endif %})
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success">En cours</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            <h5 class="alert-heading">Aucun emprunt en cours</h5>
+            <p class="mb-0">Vous n'avez actuellement aucun livre emprunté. Explorez notre catalogue pour trouver votre prochaine lecture !</p>
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+<style>
+    /* Graphiques circulaires (semi-cercle 180°) */
+    .circular-progress {
+        transform: rotate(-90deg);
+    }
+
+    .bg-circle {
+        fill: none;
+        stroke: #e9ecef;
+        stroke-width: 12;
+    }
+
+    .progress-circle {
+        fill: none;
+        stroke: #0d6efd;
+        stroke-width: 12;
+        stroke-linecap: round;
+        stroke-dasharray: 377; /* 2 * PI * 60 */
+        stroke-dashoffset: calc(377 - (377 * var(--progress)) / 100);
+        transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    /* Animation au chargement */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+        animation: fadeIn 0.5s ease-out;
+        border-radius: 12px;
+    }
+
+    .display-3, .display-4 {
+        font-weight: 700;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+</style>
+{% endblock %}

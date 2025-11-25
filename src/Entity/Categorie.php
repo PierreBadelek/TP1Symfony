@@ -18,6 +18,9 @@ class Categorie
     #[ORM\Column(length: 128)]
     private ?string $categorieNom = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $dureeEmprunt = null;
+
     /**
      * @var Collection<int, Ouvrage>
      */
@@ -42,6 +45,18 @@ class Categorie
     public function setCategorieNom(string $categorieNom): static
     {
         $this->categorieNom = $categorieNom;
+
+        return $this;
+    }
+
+    public function getDureeEmprunt(): ?int
+    {
+        return $this->dureeEmprunt;
+    }
+
+    public function setDureeEmprunt(?int $dureeEmprunt): static
+    {
+        $this->dureeEmprunt = $dureeEmprunt;
 
         return $this;
     }

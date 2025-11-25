@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LibraShelf | Configuration{% endblock %}
+
+{% block body %}
+    <div class="container pt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="mb-4">⚙️ Configuration de la bibliothèque</h1>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            {% for cle, config in configs %}
+                                <div class="mb-3">
+                                    <label for="{{ cle }}" class="form-label">
+                                        {{ defaultConfigs[cle].label }}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="{{ cle }}"
+                                        name="{{ cle }}"
+                                        value="{{ config.valeur }}"
+                                        required
+                                    >
+                                    {% if cle == 'duree_emprunt_defaut' %}
+                                        <div class="form-text">Durée standard pour tous les emprunts (peut être surchargée par catégorie)</div>
+                                    {% elseif cle == 'penalite_par_jour' %}
+                                        <div class="form-text">Montant facturé pour chaque jour de retard</div>
+                                    {% elseif cle == 'nombre_max_emprunts' %}
+                                        <div class="form-text">Nombre maximum d'emprunts qu'un utilisateur peut avoir en même temps</div>
+                                    {% elseif cle == 'delai_reservation' %}
+                                        <div class="form-text">Nombre de jours pour venir chercher une réservation disponible</div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ path('app_ouvrage_index') }}" class="btn btn-secondary">Retour</a>
+                                <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <strong>ℹ️ Information :</strong> Ces paramètres affectent le comportement global de la bibliothèque.
+                    Les modifications prendront effet immédiatement pour les nouveaux emprunts.
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LibraShelf | Historique des Emprunts{% endblock %}
+
+{% block body %}
+    <div class="container pt-3">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Historique de mes emprunts</h1>
+
+                <div class="mb-3">
+                    <a href="{{ path('app_emprunt_mes_emprunts') }}" class="btn btn-primary">Retour à mes emprunts</a>
+                </div>
+
+                {% if emprunts is empty %}
+                    <div class="alert alert-info">
+                        Vous n'avez pas encore d'historique d'emprunt.
+                    </div>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ouvrage</th>
+                                    <th>Date d'emprunt</th>
+                                    <th>Date retour prévue</th>
+                                    <th>Date retour effective</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for emprunt in emprunts %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ path('app_ouvrage_show', {'id': emprunt.exemplaire.ouvrage.id}) }}">
+                                            {{ emprunt.exemplaire.ouvrage.titre }}
+                                        </a>
+                                    </td>
+                                    <td>{{ emprunt.dateEmprunt|date('d/m/Y') }}</td>
+                                    <td>{{ emprunt.dateRetourPrevue|date('d/m/Y') }}</td>
+                                    <td>{{ emprunt.dateRetourEffective|date('d/m/Y') }}</td>
+                                    <td>
+                                        {% if emprunt.statut == 'termine' %}
+                                            <span class="badge bg-success">Rendu à temps</span>
+                                        {% elseif emprunt.statut == 'termine_avec_retard' %}
+                                            <span class="badge bg-danger">Rendu en retard</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

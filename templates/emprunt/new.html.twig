@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LibraShelf | Nouvel Emprunt{% endblock %}
+
+{% block body %}
+    <div class="container pt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="mb-4">Emprunter un exemplaire</h1>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Informations sur l'ouvrage</h5>
+                    </div>
+                    <div class="card-body">
+                        <h4>{{ exemplaire.ouvrage.titre }}</h4>
+                        <p class="text-muted">
+                            {% for auteur in exemplaire.ouvrage.auteurs %}
+                                {{ auteur.nom }} {{ auteur.prenom }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        <p><strong>Cote :</strong> {{ exemplaire.cote }}</p>
+                        <p><strong>État :</strong>
+                            {% if exemplaire.etat == 'bon' %}
+                                <span class="badge bg-success">Bon</span>
+                            {% elseif exemplaire.etat == 'moyen' %}
+                                <span class="badge bg-warning">Moyen</span>
+                            {% else %}
+                                <span class="badge bg-danger">Mauvais</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form) }}
+                            {{ form_row(form.dateRetourPrevue) }}
+
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                Vous vous engagez à retourner cet exemplaire à la date indiquée.
+                                Des pénalités seront appliquées en cas de retard.
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-3">
+                                <a href="{{ path('app_ouvrage_show', {'id': exemplaire.ouvrage.id}) }}" class="btn btn-secondary">Annuler</a>
+                                <button type="submit" class="btn btn-success">Confirmer l'emprunt</button>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

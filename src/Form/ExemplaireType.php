@@ -14,12 +14,23 @@ class ExemplaireType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('cote')
-            ->add('etat')
-            ->add('disponible')
+            ->add('cote', null, [
+                'label' => 'Cote',
+                'attr' => ['class' => 'form-control']
+            ])
+            ->add('etat', null, [
+                'label' => 'État',
+                'attr' => ['class' => 'form-control']
+            ])
+            ->add('disponible', null, [
+                'label' => 'Disponible',
+                'required' => false
+            ])
             ->add('Ouvrage', EntityType::class, [
                 'class' => Ouvrage::class,
-                'choice_label' => 'categorieNom',
+                'choice_label' => 'titre',
+                'label' => 'Ouvrage',
+                'attr' => ['class' => 'form-control']
             ])
         ;
     }

@@ -1,8 +1,8 @@
 security:
 
     role_hierarchy:
-        ROLE_ADMIN: [ ROLE_USER ]
-        ROLE_LIBRAIRIAN: [ ROLE_USER ]
+        ROLE_LIBRARIAN: [ ROLE_USER ]
+        ROLE_ADMIN: [ ROLE_LIBRARIAN, ROLE_USER ]
 
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
@@ -40,8 +40,19 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/ouvrage, roles: ROLE_USER }
+        - { path: ^/exemplaire/new, roles: ROLE_LIBRARIAN }
+        - { path: ^/exemplaire/.*/edit, roles: ROLE_LIBRARIAN }
+        - { path: ^/exemplaire/.*/delete, roles: ROLE_LIBRARIAN }
+        - { path: ^/ouvrage/new, roles: ROLE_LIBRARIAN }
+        - { path: ^/ouvrage/.*/edit, roles: ROLE_LIBRARIAN }
+        - { path: ^/ouvrage/.*/delete, roles: ROLE_LIBRARIAN }
+        - { path: ^/user, roles: ROLE_ADMIN }
+        - { path: ^/emprunt, roles: ROLE_USER }
+        - { path: ^/reservation, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:
     security:
