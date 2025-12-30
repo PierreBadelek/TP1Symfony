@@ -4,8 +4,10 @@ namespace App\Form;
 
 use App\Entity\Exemplaire;
 use App\Entity\Ouvrage;
+use App\Enum\EtatExemplaire;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,7 +20,8 @@ class ExemplaireType extends AbstractType
                 'label' => 'Cote',
                 'attr' => ['class' => 'form-control']
             ])
-            ->add('etat', null, [
+            ->add('etat', EnumType::class, [
+                'class' => EtatExemplaire::class,
                 'label' => 'État',
                 'attr' => ['class' => 'form-control']
             ])

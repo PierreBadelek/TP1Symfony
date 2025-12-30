@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use App\Enum\EtatExemplaire;
 use App\Repository\ExemplaireRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExemplaireRepository::class)]
 class Exemplaire
@@ -16,16 +18,21 @@ class Exemplaire
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'La cote ne peut pas être vide')]
+    #[Assert\Positive(message: 'La cote doit être un nombre positif')]
     private ?int $cote = null;
 
-    #[ORM\Column(length: 16)]
-    private ?string $etat = null;
+    #[ORM\Column(type: 'string', enumType: EtatExemplaire::class)]
+    #[Assert\NotNull(message: 'L\'état ne peut pas être vide')]
+    private ?EtatExemplaire $etat = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: 'La disponibilité doit être définie')]
     private ?bool $disponible = null;
 
     #[ORM\ManyToOne(inversedBy: 'exemplaires')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'L\'ouvrage doit être défini')]
     private ?Ouvrage $Ouvrage = null;
 
     /**
@@ -56,12 +63,12 @@ class Exemplaire
         return $this;
     }
 
-    public function getEtat(): ?string
+    public function getEtat(): ?EtatExemplaire
     {
         return $this->etat;
     }
 
-    public function setEtat(string $etat): static
+    public function setEtat(EtatExemplaire $etat): static
     {
         $this->etat = $etat;
 

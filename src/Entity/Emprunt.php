@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EmpruntRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EmpruntRepository::class)]
 class Emprunt
@@ -16,23 +17,32 @@ class Emprunt
 
     #[ORM\ManyToOne(inversedBy: 'emprunts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'L\'utilisateur doit être défini')]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'emprunts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'L\'exemplaire doit être défini')]
     private ?Exemplaire $exemplaire = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: 'La date d\'emprunt doit être définie')]
+    #[Assert\LessThanOrEqual('today', message: 'La date d\'emprunt ne peut pas être dans le futur')]
     private ?\DateTimeInterface $dateEmprunt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: 'La date de retour prévue doit être définie')]
+    #[Assert\GreaterThan(propertyPath: 'dateEmprunt', message: 'La date de retour doit être après la date d\'emprunt')]
     private ?\DateTimeInterface $dateRetourPrevue = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Assert\GreaterThanOrEqual(propertyPath: 'dateEmprunt', message: 'La date de retour effective doit être après la date d\'emprunt')]
     private ?\DateTimeInterface $dateRetourEffective = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $statut = 'en_cours'; // en_cours, termine, en_retard
+    #[Assert\NotBlank(message: 'Le statut ne peut pas être vide')]
+    #[Assert\Choice(choices: ['en_cours', 'termine', 'en_retard'], message: 'Le statut doit être: en_cours, termine ou en_retard')]
+    private ?string $statut = 'en_cours';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateRappelJ3 = null;

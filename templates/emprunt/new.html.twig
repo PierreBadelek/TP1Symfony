@@ -21,12 +21,13 @@
                         </p>
                         <p><strong>Cote :</strong> {{ exemplaire.cote }}</p>
                         <p><strong>État :</strong>
-                            {% if exemplaire.etat == 'bon' %}
-                                <span class="badge bg-success">Bon</span>
-                            {% elseif exemplaire.etat == 'moyen' %}
-                                <span class="badge bg-warning">Moyen</span>
+                            {% set etatValue = exemplaire.etat.value|default(exemplaire.etat) %}
+                            {% if etatValue == 'NEW' %}
+                                <span class="badge bg-success">Neuf</span>
+                            {% elseif etatValue == 'CORRECT' %}
+                                <span class="badge bg-info">Correct</span>
                             {% else %}
-                                <span class="badge bg-danger">Mauvais</span>
+                                <span class="badge bg-danger">Endommagé</span>
                             {% endif %}
                         </p>
                     </div>

@@ -6,6 +6,7 @@ use App\Entity\Auteur;
 use App\Entity\Categorie;
 use App\Entity\Exemplaire;
 use App\Entity\Ouvrage;
+use App\Enum\EtatExemplaire;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -61,7 +62,7 @@ class OuvrageFixtures extends Fixture
         $manager->flush();
 
         //Ajout des exemplaires dans la BDD
-        $etatOuvrage = ["DAMAGED","CORRECT","NEW"];
+        $etatOuvrage = [EtatExemplaire::DAMAGED, EtatExemplaire::CORRECT, EtatExemplaire::NEW];
         for ($j = 0; $j < 1000; $j++) {
             $exemplaire = new Exemplaire();
             $exemplaire->setOuvrage($faker->randomElement($lesOuvrages));

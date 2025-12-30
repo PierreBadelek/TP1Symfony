@@ -6,6 +6,7 @@ use App\Repository\OuvrageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OuvrageRepository::class)]
 class Ouvrage
@@ -16,18 +17,44 @@ class Ouvrage
     private ?int $id = null;
 
     #[ORM\Column(length: 125)]
+    #[Assert\NotBlank(message: 'Le titre ne peut pas être vide')]
+    #[Assert\Length(
+        min: 1,
+        max: 125,
+        minMessage: 'Le titre doit contenir au moins {{ limit }} caractère',
+        maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères'
+    )]
     private ?string $titre = null;
 
     #[ORM\Column(length: 125, nullable: true)]
+    #[Assert\Length(max: 125)]
     private ?string $editeur = null;
 
-    #[ORM\Column(length: 125)]
-    private ?int $isbn = null;
+    #[ORM\Column(length: 20)]
+    #[Assert\NotBlank(message: 'L\'ISBN ne peut pas être vide')]
+    #[Assert\Isbn(
+        type: Assert\Isbn::ISBN_13,
+        message: 'L\'ISBN doit être au format ISBN-13 valide'
+    )]
+    private ?string $isbn = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'L\'année ne peut pas être vide')]
+    #[Assert\Range(
+        min: 1000,
+        max: 2100,
+        notInRangeMessage: 'L\'année doit être entre {{ min }} et {{ max }}'
+    )]
     private ?int $annee = null;
 
     #[ORM\Column(length: 512)]
+    #[Assert\NotBlank(message: 'Le résumé ne peut pas être vide')]
+    #[Assert\Length(
+        min: 10,
+        max: 512,
+        minMessage: 'Le résumé doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le résumé ne peut pas dépasser {{ limit }} caractères'
+    )]
     private ?string $resume = null;
 
     /**
@@ -84,12 +111,12 @@ class Ouvrage
         return $this;
     }
 
-    public function getIsbn(): ?int
+    public function getIsbn(): ?string
     {
         return $this->isbn;
     }
 
-    public function setIsbn(int $isbn): static
+    public function setIsbn(string $isbn): static
     {
         $this->isbn = $isbn;
 

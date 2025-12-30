@@ -63,7 +63,16 @@
                             <tr>
                                 <td class="fw-semibold">{{ exemplaire.ouvrage.getTitre() }}</td>
                                 <td><span class="badge bg-secondary">{{ exemplaire.cote }}</span></td>
-                                <td>{{ exemplaire.etat }}</td>
+                                <td>
+                                    {% set etatValue = exemplaire.etat.value|default(exemplaire.etat) %}
+                                    {% if etatValue == 'NEW' %}
+                                        <span class="badge bg-success">Neuf</span>
+                                    {% elseif etatValue == 'CORRECT' %}
+                                        <span class="badge bg-info">Correct</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Endommagé</span>
+                                    {% endif %}
+                                </td>
                                 <td class="text-center">
                                     {% if exemplaire.disponible %}
                                         <span class="badge bg-success">Disponible</span>
